@@ -1,0 +1,7 @@
+{
+	"watch": ["server.js"],
+	"ext": "js,mjs,json",
+	"ignore": ["node_modules", ".git", "logs"],
+	"exec": "node server.js",
+	"quiet": true
+}
