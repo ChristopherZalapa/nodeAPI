@@ -17,6 +17,14 @@ const server = http.createServer((req, res) => {
 		});
 
 		sendJsonResponse(res, 200, filteredData);
+	} else if (req.url.startsWith("/api/country") && req.method === "GET") {
+		const country = req.url.split("/").pop();
+
+		const filteredData = destinations.filter((destination) => {
+			return destination.country.toUpperCase() === country.toUpperCase();
+		});
+
+		sendJsonResponse(res, 200, filteredData);
 	} else {
 		sendJsonResponse(res, 404, {
 			error: "Not found",
