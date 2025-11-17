@@ -2,14 +2,21 @@ import http from "node:http";
 import data from "./Data/data.js";
 import sendJsonResponse from "./Utilities/sendJsonResponse.js";
 import getDataByPathParams from "./Utilities/getDataByPathParams.js";
+import getDataByQueryParams from "./Utilities/getDataByQueryParams.js";
 
 const PORT = 8000;
 
 const server = http.createServer((req, res) => {
 	const destinations = data;
 
-	if (req.url === "/api" && req.method === "GET") {
-		sendJsonResponse(res, 200, destinations);
+	const urlObj = new URL(req.url, `http://${req.headers.host}`);
+
+	const queryObj = Object.fromEntries(urlObj.searchParams);
+
+	if (urlObj.pathname === "/api" && req.method === "GET") {
+		let filteredData = getDataByQueryParams(destinations, queryObj)
+
+		sendJsonResponse(res, 200, filteredData);
 	} else if (req.url.startsWith("/api/continent") && req.method === "GET") {
 		const continent = req.url.split("/").pop();
 		const filteredData = getDataByPathParams(
@@ -17,6 +24,7 @@ const server = http.createServer((req, res) => {
 			"continent",
 			continent,
 		);
+
 		sendJsonResponse(res, 200, filteredData);
 	} else if (req.url.startsWith("/api/country") && req.method === "GET") {
 		const country = req.url.split("/").pop();
